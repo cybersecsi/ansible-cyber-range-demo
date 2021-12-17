@@ -4,6 +4,20 @@
         name: net-tools
         state: present
 
+    - name: Install pip3
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install docker dep
+      pip:
+        name: docker
+    - name: Install dockercompose
+      pip:
+        name: docker-compose
+
+
+
     - name: Install default jre
       apt:
         name: default-jre 
@@ -20,6 +34,9 @@
       copy:
         src: edb2docker.jar
         dest: /home/{{ansible_user}}/edb2docker.jar
+        owner: "{{ansible_user}}"
+        group: "{{ansible_user}}"
+        mode: u=rwx,g=r,o=r
 
     - name: "Download ctfd"
       ansible.builtin.git:
