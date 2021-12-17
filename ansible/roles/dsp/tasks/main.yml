@@ -1,0 +1,31 @@
+---
+    - name: Install netstat
+      apt:
+        name: net-tools
+        state: present
+
+    - name: Install default jre
+      apt:
+        name: default-jre 
+        state: present
+
+    - name: "Update bashrc"
+      lineinfile:
+        dest: /home/{{ansible_user}}/.bashrc
+        line: export DSP_IFACE="0.0.0.0"
+        state: present
+        insertafter: EOF
+
+    - name: "Copy edb2docker"
+      copy:
+        src: edb2docker.jar
+        dest: /home/{{ansible_user}}/edb2docker.jar
+
+    - name: "Download ctfd"
+      ansible.builtin.git:
+        repo: 'https://github.com/CTFd/CTFd.git'
+        dest: '/home/{{ansible_user}}/CTFd'
+
+    - name: Run `docker-compose up` on CTFd
+      community.docker.docker_compose:
+        project_src: '/home/{{ansible_user}}/CTFd'

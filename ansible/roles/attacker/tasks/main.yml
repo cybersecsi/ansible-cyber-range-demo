@@ -1,0 +1,68 @@
+---
+- name: Install unzip
+  yum:
+    name: unzip
+    state: latest
+
+- name: Install netstat
+  yum:
+    name: net-tools
+    state: latest
+
+- name: Install git
+  yum:
+    name: git 
+    state: latest
+
+- name: Install java
+  yum:
+    name: java-1.8.0-openjdk
+    state: latest
+
+- name: Install nmap
+  yum:
+    name: nmap
+    state: latest
+
+- name: "extract JNDIExploit"
+  ansible.builtin.unarchive:
+    src: JNDIExploit.zip 
+    dest: /home/{{ansible_user}}/
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+    mode: u=rwx,g=r,o=r
+
+
+- name: "copy script jndi"
+  copy: 
+    src: run_jndi_exploit.sh
+    dest: /home/{{ansible_user}}/
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+    mode: u=rwx,g=r,o=r
+
+
+
+- name: "copy script nmap"
+  copy: 
+    src: run_nmap.sh
+    dest: /home/{{ansible_user}}/
+
+- name: "Install nmap check log4j script"
+  get_url:
+    url:  https://raw.githubusercontent.com/giterlizzi/nmap-log4shell/main/log4shell.nse
+    dest: /usr/share/nmap/scripts/
+
+
+- name: "Install log4j-scan"
+  ansible.builtin.git:
+    repo: https://github.com/fullhunt/log4j-scan.git
+    dest: '/home/{{ansible_user}}/log4j-scan'
+
+- name: "Install pip requirements"
+  pip:
+    requirements: '/home/{{ansible_user}}/log4j-scan/requirements.txt'
+  
+
+
+

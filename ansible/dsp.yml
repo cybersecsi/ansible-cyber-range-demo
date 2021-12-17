@@ -1,0 +1,52 @@
+---
+- name: "Install Docker"
+  gather_facts: true
+  become: true
+  hosts: dsp
+  roles: 
+    - darkwizard242.docker
+
+- name: "Install Docker Compose"
+  gather_facts: true
+  become: true
+  hosts: dsp
+  tasks:
+    - name: "Download dockker-compose"
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.27.4/docker-compose-{{ ansible_system }}-{{ ansible_machine }}
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+
+- name: "Install Nodejs"
+  gather_facts: true
+  become: true
+  hosts: dsp
+  roles: 
+    - {role: geerlingguy.nodejs}
+
+- name: "Install dsp requirements"
+  become: true
+  hosts: dsp
+  tasks: 
+    - name: Install prequirements
+      apt:
+        name: build-essential
+        state: present
+
+- name: "Install dsp"
+  hosts: dsp
+  tasks:
+    - name: "Download DSP"
+      ansible.builtin.git:
+        repo: 'https://github.com/giper45/DockerSecurityPlayground.git'
+        dest: '/home/{{ansible_user}}/DockerSecurityPlayground'  
+    - name: "Npm install packages"
+      community.general.npm:
+        path: '/home/{{ansible_user}}/DockerSecurityPlayground'  
+
+- name: "Install other stuff"
+  hosts: dsp
+  become: yes
+  roles: 
+    - dsp

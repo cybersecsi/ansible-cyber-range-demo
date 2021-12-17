@@ -1,0 +1,6 @@
+---
+- hosts: vulnerable
+  become: true
+  roles:
+    - darkwizard242.docker
+    - vulnerable

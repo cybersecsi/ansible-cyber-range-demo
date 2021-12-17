@@ -1,0 +1,5 @@
+---
+- hosts: attacker
+  become: true
+  roles:
+    - attacker
